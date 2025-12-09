@@ -1,0 +1,90 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║     ENGINE LUBRICATION LEARNING PROGRAM - QUICK START       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚀 GET STARTED IN 3 STEPS:
+
+┌────────────────────────────────────────────────────────────┐
+│ STEP 1: OPEN THE PROGRAM                                   │
+└────────────────────────────────────────────────────────────┘
+
+   Double-click: index.html
+
+   This opens the main landing page in your web browser.
+
+
+┌────────────────────────────────────────────────────────────┐
+│ STEP 2: READ THE TEACHER GUIDE                             │
+└────────────────────────────────────────────────────────────┘
+
+   Open: TEACHER-GUIDE.md
+
+   Complete lesson plan with timing, activities, and tips.
+
+
+┌────────────────────────────────────────────────────────────┐
+│ STEP 3: DEPLOY (OPTIONAL)                                  │
+└────────────────────────────────────────────────────────────┘
+
+   Read: DEPLOYMENT-GUIDE.md
+
+   Instructions for GitHub Pages, school network, or USB.
+
+
+═══════════════════════════════════════════════════════════════
+
+📂 WHAT'S IN THIS PACKAGE:
+
+✓ index.html                    → Main landing page
+✓ activities/                   → Interactive identifier
+✓ quizzes/                      → Single & multiplayer quizzes
+✓ resources/                    → PowerPoint & handout
+✓ TEACHER-GUIDE.md             → Complete teaching support
+✓ README.md                     → Full documentation
+✓ DEPLOYMENT-GUIDE.md          → Setup instructions
+
+═══════════════════════════════════════════════════════════════
+
+🎯 LEARNING PATH FOR STUDENTS:
+
+1. Watch Presentation (15-20 min)
+   └─→ resources/engine-lubrication-presentation.pptx
+
+2. Hands-On Activity (30-40 min)
+   └─→ activities/identify-friction-areas.html
+   └─→ Use with Halfords model engine
+
+3. Take Quiz (10-15 min)
+   └─→ quizzes/single-player-quiz.html
+
+4. Compete! (15-20 min)
+   └─→ quizzes/multiplayer-quiz.html
+
+═══════════════════════════════════════════════════════════════
+
+💡 QUICK TIPS:
+
+• All HTML files work offline (except multiplayer quiz)
+• Open files in Chrome, Firefox, Safari, or Edge
+• Students can use tablets or computers
+• Print handout from resources/ folder
+• Customize colors in HTML files if needed
+
+═══════════════════════════════════════════════════════════════
+
+📞 NEED HELP?
+
+📧 Email: support@codeedai.com
+🌐 Web: https://codeedai.com
+📖 Docs: Read README.md or TEACHER-GUIDE.md
+
+═══════════════════════════════════════════════════════════════
+
+✅ READY TO GO!
+
+Everything you need is in this folder. Just open index.html
+and follow the learning path. Your students will love it!
+
+═══════════════════════════════════════════════════════════════

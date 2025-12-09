@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine Lubrication Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #1A2332;
+            --accent: #F39C12;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --light: #ECF0F1;
+            --dark: #2C3E50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1A2332 0%, #2C3E50 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .question-counter {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .score-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.6);
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 6px solid var(--primary);
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .answers-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .answer-btn.correct {
+            background: var(--success);
+            border-color: var(--success);
+            animation: correctPulse 0.6s ease;
+        }
+
+        .answer-btn.incorrect {
+            background: var(--danger);
+            border-color: var(--danger);
+            animation: shake 0.5s ease;
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback.correct {
+            background: rgba(46, 204, 113, 0.2);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+        }
+
+        .next-btn.show {
+            display: inline-block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .next-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        .final-score {
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 30px 0;
+            text-shadow: 0 0 40px rgba(243, 156, 18, 0.6);
+            animation: scoreReveal 0.8s ease;
+        }
+
+        .results-message {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .results-feedback {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: var(--light);
+            opacity: 0.9;
+        }
+
+        .restart-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-btn:hover {
+            background: #27AE60;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes scoreReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 25px;
+            }
+
+            .question-text {
+                font-size: 1.3rem;
+            }
+
+            .answer-btn {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+
+            .final-score {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Engine Lubrication Quiz</h1>
+            <p class="subtitle">Test Your Knowledge on Friction Areas</p>
+        </header>
+
+        <div class="quiz-container">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="question-counter">Question <span id="currentQ">1</span> of <span id="totalQ">10</span></span>
+                    <span class="score-display">Score: <span id="score">0</span>/<span id="totalScore">10</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div id="quizContent">
+                <div class="question-card">
+                    <div class="question-text" id="questionText"></div>
+                    <div class="answers-grid" id="answersGrid"></div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="next-btn" id="nextBtn">Next Question</button>
+                </div>
+            </div>
+
+            <div class="results-container" id="resultsContainer">
+                <div class="results-message" id="resultsMessage"></div>
+                <div class="final-score"><span id="finalScore"></span>%</div>
+                <div class="results-feedback" id="resultsFeedback"></div>
+                <button class="restart-btn" onclick="restartQuiz()">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What happens when two metal parts rub together without oil?",
+                answers: [
+                    "They get cold",
+                    "They create heat and wear",
+                    "Nothing happens",
+                    "They become stronger"
+                ],
+                correct: 1
+            },
+            {
+                question: "Where would you find the camshaft bearings?",
+                answers: [
+                    "At the bottom of the engine",
+                    "Inside the fuel tank",
+                    "At the top of the engine where the camshaft rotates",
+                    "In the exhaust system"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the main job of engine oil?",
+                answers: [
+                    "To make the engine heavier",
+                    "To create a film between moving parts",
+                    "To make the engine louder",
+                    "To cool the radiator"
+                ],
+                correct: 1
+            },
+            {
+                question: "How many critical friction areas are there in an engine?",
+                answers: [
+                    "4",
+                    "6",
+                    "8",
+                    "10"
+                ],
+                correct: 2
+            },
+            {
+                question: "What do piston rings do?",
+                answers: [
+                    "They seal the cylinder and scrape oil from walls",
+                    "They hold the engine together",
+                    "They pump fuel",
+                    "They cool the radiator"
+                ],
+                correct: 0
+            },
+            {
+                question: "Where are the main bearings located?",
+                answers: [
+                    "In the cylinder head",
+                    "Supporting the crankshaft in the engine block",
+                    "In the oil filter",
+                    "On the pistons"
+                ],
+                correct: 1
+            },
+            {
+                question: "What could happen if an engine runs without oil?",
+                answers: [
+                    "It runs faster",
+                    "Nothing changes",
+                    "It could seize (stop working) in minutes",
+                    "It becomes quieter"
+                ],
+                correct: 2
+            },
+            {
+                question: "What drives the oil pump?",
+                answers: [
+                    "The battery",
+                    "The crankshaft",
+                    "The steering wheel",
+                    "The radiator"
+                ],
+                correct: 1
+            },
+            {
+                question: "Where do cylinder walls get their oil from?",
+                answers: [
+                    "The fuel tank",
+                    "Oil splash and piston rings",
+                    "The exhaust pipe",
+                    "The air filter"
+                ],
+                correct: 1
+            },
+            {
+                question: "Why is oil called 'the lifeblood of the engine'?",
+                answers: [
+                    "Because it's red like blood",
+                    "Because the engine can't work without it",
+                    "Because it tastes good",
+                    "Because it makes noise"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const question = quizData[currentQuestion];
+            
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('totalQ').textContent = quizData.length;
+            document.getElementById('totalScore').textContent = quizData.length;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            
+            question.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(index);
+                answersGrid.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
+            document.getElementById('nextBtn').classList.remove('show');
+            
+            updateProgress();
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (answered) return;
+            answered = true;
+            
+            const question = quizData[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            const feedback = document.getElementById('feedback');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedIndex === question.correct) {
+                buttons[selectedIndex].classList.add('correct');
+                feedback.textContent = '✓ Correct! Well done!';
+                feedback.classList.add('show', 'correct');
+                score++;
+                document.getElementById('score').textContent = score;
+            } else {
+                buttons[selectedIndex].classList.add('incorrect');
+                buttons[question.correct].classList.add('correct');
+                feedback.textContent = '✗ Not quite. The correct answer is highlighted in green.';
+                feedback.classList.add('show', 'incorrect');
+            }
+            
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showResults() {
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('resultsContainer').classList.add('show');
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            document.getElementById('finalScore').textContent = percentage;
+            
+            let message, feedback;
+            
+            if (percentage === 100) {
+                message = '🏆 Perfect Score!';
+                feedback = 'Outstanding! You know your engine lubrication inside and out!';
+            } else if (percentage >= 80) {
+                message = '⭐ Excellent Work!';
+                feedback = 'Great job! You really understand engine friction areas!';
+            } else if (percentage >= 60) {
+                message = '👍 Good Effort!';
+                feedback = 'Well done! Review the materials to improve even more.';
+            } else if (percentage >= 40) {
+                message = '📚 Keep Learning!';
+                feedback = 'You\'re getting there! Try reviewing the handout and interactive activity.';
+            } else {
+                message = '💪 Try Again!';
+                feedback = 'Don\'t worry! Go back to the materials and give it another go.';
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+            document.getElementById('resultsFeedback').textContent = feedback;
+            document.getElementById('progressFill').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            document.getElementById('score').textContent = '0';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('resultsContainer').classList.remove('show');
+            
+            loadQuestion();
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
+        // Load first question
+        loadQuestion();
+    </script>
+</body>
+</html>

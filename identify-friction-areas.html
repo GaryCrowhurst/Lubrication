@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine Lubrication System - Friction Area Identification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #004E89;
+            --accent: #F7B801;
+            --success: #2EC4B6;
+            --dark: #1A1A2E;
+            --light: #F4F4F9;
+            --danger: #E63946;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, var(--dark) 0%, #16213E 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .task-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background: rgba(247, 184, 1, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .engine-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(0, 78, 137, 0.4);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .friction-checklist {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .checklist-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .checklist-header h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .checklist-header p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .friction-card {
+            background: linear-gradient(135deg, rgba(0, 78, 137, 0.2), rgba(0, 78, 137, 0.1));
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .friction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(247, 184, 1, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .friction-card:hover::before {
+            opacity: 1;
+        }
+
+        .friction-card.identified {
+            background: linear-gradient(135deg, rgba(46, 196, 182, 0.3), rgba(46, 196, 182, 0.15));
+            border-color: var(--success);
+            transform: scale(1.02);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .friction-card.identified .card-number {
+            background: rgba(46, 196, 182, 0.3);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .friction-card.identified .card-number::after {
+            content: '✓';
+            position: absolute;
+            font-size: 1.5rem;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-content h4 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            padding-right: 50px;
+        }
+
+        .location-hint {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+
+        .identify-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .identify-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(247, 184, 1, 0.4);
+        }
+
+        .identify-btn:disabled {
+            background: var(--success);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .identify-btn:disabled::before {
+            content: '✓ ';
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent);
+        }
+
+        .progress-count {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(247, 184, 1, 0.5);
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(46, 196, 182, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .info-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card h4 {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--success);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .completion-message {
+            background: linear-gradient(135deg, var(--success), #1B9AAA);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+            animation: celebrationPulse 1s ease;
+        }
+
+        .completion-message.show {
+            display: block;
+        }
+
+        .completion-message h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .completion-message p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .reset-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reset-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(247, 184, 1, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes celebrationPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .checklist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .friction-card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .checklist-header h3 {
+                font-size: 1.5rem;
+            }
+
+            .card-content h4 {
+                font-size: 1.2rem;
+            }
+
+            .location-hint {
+                font-size: 0.85rem;
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Engine Lubrication System</h1>
+            <p class="subtitle">Identify Critical Friction Areas</p>
+        </header>
+
+        <div class="task-card">
+            <div class="instructions">
+                <h3>🎯 Your Task</h3>
+                <p>Using your Halfords model engine, locate each of the 8 critical friction areas listed below. Once you've found an area on the physical model, click "Mark as Found" to learn why that area needs lubrication. Try to identify all 8 areas!</p>
+            </div>
+            <div class="task-description">
+                <strong>Learning Objective:</strong> Physically identify and understand the critical friction points in an engine where lubrication is essential for preventing wear, reducing heat, and ensuring smooth operation.
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="progress-title">Progress</span>
+                <span class="progress-count"><span id="found">0</span>/8 Identified</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="engine-container">
+            <div class="friction-checklist">
+                <div class="checklist-header">
+                    <h3>🔧 Locate These Friction Areas on Your Model Engine</h3>
+                    <p>Find each area on your Halfords model engine, then click to mark it as identified</p>
+                </div>
+                
+                <div class="checklist-grid">
+                    <div class="friction-card" data-point="1">
+                        <div class="card-number">1</div>
+                        <div class="card-content">
+                            <h4>Camshaft Bearings</h4>
+                            <p class="location-hint">Look at the top of the engine where the camshaft rotates</p>
+                            <button class="identify-btn" onclick="identifyPoint(1)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="2">
+                        <div class="card-number">2</div>
+                        <div class="card-content">
+                            <h4>Valve Train</h4>
+                            <p class="location-hint">Rocker arms, lifters, and cam lobes in the cylinder head</p>
+                            <button class="identify-btn" onclick="identifyPoint(2)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="3">
+                        <div class="card-number">3</div>
+                        <div class="card-content">
+                            <h4>Piston Rings</h4>
+                            <p class="location-hint">Located on the piston - compression and oil control rings</p>
+                            <button class="identify-btn" onclick="identifyPoint(3)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="4">
+                        <div class="card-number">4</div>
+                        <div class="card-content">
+                            <h4>Cylinder Walls</h4>
+                            <p class="location-hint">The smooth inner surface of the cylinder bore</p>
+                            <button class="identify-btn" onclick="identifyPoint(4)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="5">
+                        <div class="card-number">5</div>
+                        <div class="card-content">
+                            <h4>Connecting Rod Bearings</h4>
+                            <p class="location-hint">Where the connecting rod attaches to the crankshaft</p>
+                            <button class="identify-btn" onclick="identifyPoint(5)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="6">
+                        <div class="card-number">6</div>
+                        <div class="card-content">
+                            <h4>Main Bearings</h4>
+                            <p class="location-hint">Support the crankshaft in the engine block</p>
+                            <button class="identify-btn" onclick="identifyPoint(6)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="7">
+                        <div class="card-number">7</div>
+                        <div class="card-content">
+                            <h4>Crankshaft Journals</h4>
+                            <p class="location-hint">Polished surfaces on the crankshaft where bearings contact</p>
+                            <button class="identify-btn" onclick="identifyPoint(7)">Mark as Found</button>
+                        </div>
+                    </div>
+
+                    <div class="friction-card" data-point="8">
+                        <div class="card-number">8</div>
+                        <div class="card-content">
+                            <h4>Oil Pump Gears</h4>
+                            <p class="location-hint">Usually at the bottom of the engine, driven by the crankshaft</p>
+                            <button class="identify-btn" onclick="identifyPoint(8)">Mark as Found</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-cards" id="infoCards"></div>
+
+        <div class="completion-message" id="completionMessage">
+            <h2>🎉 Excellent Work!</h2>
+            <p>You've successfully identified all 8 critical friction areas in the engine lubrication system. You now understand where oil must reach to prevent wear and ensure smooth operation.</p>
+            <button class="reset-btn" onclick="resetActivity()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const frictionPoints = {
+            1: {
+                name: "Camshaft Bearings",
+                description: "The camshaft rotates at high speeds to operate the valves. Bearings must be lubricated to reduce friction and prevent seizure. Oil reaches these through dedicated galleries in the cylinder head."
+            },
+            2: {
+                name: "Valve Train",
+                description: "Includes rocker arms, lifters, and cam lobes. These components operate under high pressure and require constant lubrication to prevent wear. Oil splash and pressure feed keep these parts protected."
+            },
+            3: {
+                name: "Piston Rings",
+                description: "Rings seal the combustion chamber and scrape oil from cylinder walls. The compression and oil control rings must be lubricated to prevent scuffing and maintain proper sealing."
+            },
+            4: {
+                name: "Cylinder Walls",
+                description: "Pistons slide up and down at high speeds against cylinder walls. Oil film prevents metal-to-metal contact. Insufficient lubrication causes scoring and accelerated wear."
+            },
+            5: {
+                name: "Connecting Rod Bearings",
+                description: "Connect the piston to the crankshaft and experience extreme forces. Pressurized oil is forced through drilled passages to create a protective film between the bearing and journal."
+            },
+            6: {
+                name: "Main Bearings",
+                description: "Support the crankshaft in the engine block. These bearings handle the entire engine load and require continuous pressurized oil supply to prevent bearing failure."
+            },
+            7: {
+                name: "Crankshaft Journals",
+                description: "The polished surfaces where bearings contact the crankshaft. Oil pressure creates a hydrodynamic wedge that keeps metal surfaces separated during operation."
+            },
+            8: {
+                name: "Oil Pump Gears",
+                description: "The pump creates pressure to circulate oil throughout the engine. Its gears must also be lubricated to function properly and maintain consistent oil pressure."
+            }
+        };
+
+        let identified = new Set();
+
+        function identifyPoint(pointNumber) {
+            if (identified.has(pointNumber)) return;
+
+            identified.add(pointNumber);
+            
+            const card = document.querySelector(`.friction-card[data-point="${pointNumber}"]`);
+            card.classList.add('identified');
+            
+            const btn = card.querySelector('.identify-btn');
+            btn.disabled = true;
+            btn.textContent = 'Identified';
+
+            updateProgress();
+            showInfoCard(pointNumber);
+
+            if (identified.size === 8) {
+                setTimeout(() => {
+                    document.getElementById('completionMessage').classList.add('show');
+                }, 500);
+            }
+        }
+
+        function updateProgress() {
+            const count = identified.size;
+            const percentage = (count / 8) * 100;
+            
+            document.getElementById('found').textContent = count;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function resetActivity() {
+            identified.clear();
+            
+            document.querySelectorAll('.friction-card').forEach(card => {
+                card.classList.remove('identified');
+                const btn = card.querySelector('.identify-btn');
+                btn.disabled = false;
+                btn.textContent = 'Mark as Found';
+            });
+            
+            document.getElementById('infoCards').innerHTML = '';
+            document.getElementById('completionMessage').classList.remove('show');
+            updateProgress();
+        }
+
+        // Smooth scroll to info cards when they appear
+        function showInfoCard(pointNumber) {
+            const info = frictionPoints[pointNumber];
+            const infoCards = document.getElementById('infoCards');
+            
+            const card = document.createElement('div');
+            card.className = 'info-card';
+            card.innerHTML = `
+                <h4>${info.name}</h4>
+                <p>${info.description}</p>
+            `;
+            
+            infoCards.appendChild(card);
+            
+            setTimeout(() => {
+                card.classList.add('show');
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>

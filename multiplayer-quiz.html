@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Engine Quiz</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #1A2332;
+            --accent: #F39C12;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --light: #ECF0F1;
+            --dark: #2C3E50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1A2332 0%, #2C3E50 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .setup-screen h2 {
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-group {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--dark);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #34495E;
+            transform: translateY(-2px);
+        }
+
+        .room-code-display {
+            background: rgba(243, 156, 18, 0.2);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .room-code-display .label {
+            font-size: 0.9rem;
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .room-code-display .code {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 3px;
+        }
+
+        /* Waiting Room */
+        .waiting-room {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .waiting-room.active {
+            display: block;
+        }
+
+        .waiting-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .players-list {
+            display: grid;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--accent);
+            animation: slideIn 0.4s ease;
+        }
+
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .player-badge {
+            background: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Quiz Screen */
+        .quiz-screen {
+            display: none;
+        }
+
+        .quiz-screen.active {
+            display: block;
+        }
+
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .quiz-main {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .answers-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .answer-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .answer-btn.correct {
+            background: var(--success);
+            border-color: var(--success);
+            animation: correctPulse 0.6s ease;
+        }
+
+        .answer-btn.incorrect {
+            background: var(--danger);
+            border-color: var(--danger);
+            animation: shake 0.5s ease;
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Leaderboard Sidebar */
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(46, 196, 182, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .leaderboard h3 {
+            color: var(--success);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leaderboard-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item.first {
+            border: 2px solid var(--accent);
+            background: rgba(243, 156, 18, 0.15);
+        }
+
+        .leaderboard-item.me {
+            border-left: 4px solid var(--primary);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            width: 30px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .leaderboard-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .results-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+        }
+
+        .winner-announcement {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            animation: scoreReveal 0.8s ease;
+        }
+
+        .final-leaderboard {
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .final-leaderboard-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3rem;
+        }
+
+        .final-leaderboard-item.winner {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(255, 107, 53, 0.3));
+            border: 2px solid var(--accent);
+            transform: scale(1.05);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes scoreReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .quiz-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard {
+                order: -1;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            background: rgba(243, 156, 18, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 600;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Multiplayer Engine Quiz</h1>
+            <p class="subtitle">Compete in Real-Time!</p>
+        </header>
+
+        <!-- Setup Screen -->
+        <div class="setup-screen" id="setupScreen">
+            <h2>Join the Competition</h2>
+            
+            <div class="input-group">
+                <label>Your Name</label>
+                <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="createRoom()">Create New Room</button>
+                <button class="btn btn-secondary" onclick="showJoinInput()">Join Existing Room</button>
+            </div>
+
+            <div id="joinInput" class="hidden">
+                <div class="input-group">
+                    <label>Room Code</label>
+                    <input type="text" id="roomCode" placeholder="Enter 6-digit code" maxlength="6">
+                </div>
+                <button class="btn btn-primary" onclick="joinRoom()">Join Room</button>
+            </div>
+        </div>
+
+        <!-- Waiting Room -->
+        <div class="waiting-room" id="waitingRoom">
+            <div class="waiting-container">
+                <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">Waiting Room</h2>
+                
+                <div class="room-code-display">
+                    <div class="label">Room Code</div>
+                    <div class="code" id="displayRoomCode">------</div>
+                </div>
+
+                <div class="status-message" id="statusMessage">
+                    Waiting for players to join...
+                </div>
+
+                <h3 style="color: var(--light); margin: 20px 0;">Players (<span id="playerCount">0</span>)</h3>
+                <div class="players-list" id="playersList"></div>
+
+                <button class="btn btn-primary" id="startBtn" onclick="startQuiz()" style="width: 100%; margin-top: 20px;">
+                    Start Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen" id="quizScreen">
+            <div class="quiz-layout">
+                <div class="quiz-main">
+                    <div class="question-header">
+                        <span class="question-number">Question <span id="currentQ">1</span>/10</span>
+                        <span class="timer" id="timer">15</span>
+                    </div>
+
+                    <div class="question-text" id="questionText"></div>
+                    <div class="answers-grid" id="answersGrid"></div>
+                </div>
+
+                <div class="leaderboard">
+                    <h3>🏆 Live Scores</h3>
+                    <div class="leaderboard-list" id="leaderboardList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="results-container">
+                <div class="winner-announcement" id="winnerText">🎉 Winner: Player Name!</div>
+                
+                <h2 style="color: var(--light); margin: 30px 0;">Final Leaderboard</h2>
+                <div class="final-leaderboard" id="finalLeaderboard"></div>
+
+                <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 30px; padding: 20px 50px;">
+                    Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizQuestions = [
+            {
+                question: "What happens when two metal parts rub together without oil?",
+                answers: ["They get cold", "They create heat and wear", "Nothing happens", "They become stronger"],
+                correct: 1
+            },
+            {
+                question: "Where would you find the camshaft bearings?",
+                answers: ["Bottom of engine", "Inside fuel tank", "Top of engine where camshaft rotates", "In exhaust system"],
+                correct: 2
+            },
+            {
+                question: "What is the main job of engine oil?",
+                answers: ["Make engine heavier", "Create film between moving parts", "Make engine louder", "Cool radiator"],
+                correct: 1
+            },
+            {
+                question: "How many critical friction areas are in an engine?",
+                answers: ["4", "6", "8", "10"],
+                correct: 2
+            },
+            {
+                question: "What do piston rings do?",
+                answers: ["Seal cylinder and scrape oil", "Hold engine together", "Pump fuel", "Cool radiator"],
+                correct: 0
+            },
+            {
+                question: "Where are the main bearings located?",
+                answers: ["Cylinder head", "Supporting crankshaft in engine block", "Oil filter", "On pistons"],
+                correct: 1
+            },
+            {
+                question: "What could happen if engine runs without oil?",
+                answers: ["Runs faster", "Nothing changes", "Could seize in minutes", "Becomes quieter"],
+                correct: 2
+            },
+            {
+                question: "What drives the oil pump?",
+                answers: ["Battery", "Crankshaft", "Steering wheel", "Radiator"],
+                correct: 1
+            },
+            {
+                question: "Where do cylinder walls get oil from?",
+                answers: ["Fuel tank", "Oil splash and piston rings", "Exhaust pipe", "Air filter"],
+                correct: 1
+            },
+            {
+                question: "Why is oil called 'the lifeblood of the engine'?",
+                answers: ["It's red like blood", "Engine can't work without it", "It tastes good", "It makes noise"],
+                correct: 1
+            }
+        ];
+
+        let peer;
+        let connections = [];
+        let isHost = false;
+        let myPeerId;
+        let roomCode;
+        let players = {};
+        let myName;
+        let currentQuestion = 0;
+        let myScore = 0;
+        let timer;
+        let timeLeft = 15;
+        let answered = false;
+
+        function generateRoomCode() {
+            return Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        function createRoom() {
+            myName = document.getElementById('playerName').value.trim();
+            if (!myName) {
+                alert('Please enter your name!');
+                return;
+            }
+
+            isHost = true;
+            roomCode = generateRoomCode();
+            
+            peer = new Peer(roomCode);
+            
+            peer.on('open', (id) => {
+                myPeerId = id;
+                players[myPeerId] = { name: myName, score: 0, answered: false };
+                
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('waitingRoom').classList.add('active');
+                document.getElementById('displayRoomCode').textContent = roomCode;
+                
+                updatePlayersList();
+            });
+
+            peer.on('connection', (conn) => {
+                connections.push(conn);
+                setupConnection(conn);
+            });
+        }
+
+        function showJoinInput() {
+            document.getElementById('joinInput').classList.remove('hidden');
+        }
+
+        function joinRoom() {
+            myName = document.getElementById('playerName').value.trim();
+            roomCode = document.getElementById('roomCode').value.trim().toUpperCase();
+            
+            if (!myName || !roomCode) {
+                alert('Please enter your name and room code!');
+                return;
+            }
+
+            peer = new Peer();
+            
+            peer.on('open', (id) => {
+                myPeerId = id;
+                const conn = peer.connect(roomCode);
+                connections.push(conn);
+                setupConnection(conn);
+
+                conn.on('open', () => {
+                    conn.send({
+                        type: 'join',
+                        peerId: myPeerId,
+                        name: myName
+                    });
+                });
+            });
+        }
+
+        function setupConnection(conn) {
+            conn.on('data', (data) => {
+                handleMessage(data, conn);
+            });
+
+            conn.on('open', () => {
+                if (!isHost) {
+                    document.getElementById('setupScreen').classList.add('hidden');
+                    document.getElementById('waitingRoom').classList.add('active');
+                    document.getElementById('displayRoomCode').textContent = roomCode;
+                    document.getElementById('startBtn').classList.add('hidden');
+                }
+            });
+        }
+
+        function handleMessage(data, conn) {
+            switch(data.type) {
+                case 'join':
+                    if (isHost) {
+                        players[data.peerId] = { name: data.name, score: 0, answered: false };
+                        broadcastPlayers();
+                        updatePlayersList();
+                    }
+                    break;
+                
+                case 'players':
+                    players = data.players;
+                    updatePlayersList();
+                    break;
+                
+                case 'start':
+                    startQuizForAll();
+                    break;
+                
+                case 'question':
+                    loadQuestion(data.questionIndex);
+                    break;
+                
+                case 'answer':
+                    if (isHost) {
+                        players[data.peerId].score = data.score;
+                        players[data.peerId].answered = true;
+                        broadcastScores();
+                    }
+                    break;
+                
+                case 'scores':
+                    Object.keys(data.scores).forEach(peerId => {
+                        if (players[peerId]) {
+                            players[peerId].score = data.scores[peerId];
+                        }
+                    });
+                    updateLeaderboard();
+                    break;
+                
+                case 'results':
+                    showResults(data.winner);
+                    break;
+            }
+        }
+
+        function broadcastPlayers() {
+            const message = {
+                type: 'players',
+                players: players
+            };
+            connections.forEach(conn => conn.send(message));
+        }
+
+        function broadcastScores() {
+            const scores = {};
+            Object.keys(players).forEach(peerId => {
+                scores[peerId] = players[peerId].score;
+            });
+            
+            const message = {
+                type: 'scores',
+                scores: scores
+            };
+            connections.forEach(conn => conn.send(message));
+        }
+
+        function updatePlayersList() {
+            const list = document.getElementById('playersList');
+            list.innerHTML = '';
+            
+            Object.keys(players).forEach(peerId => {
+                const player = players[peerId];
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.innerHTML = `
+                    <span class="player-name">${player.name}</span>
+                    ${peerId === myPeerId ? '<span class="player-badge">You</span>' : ''}
+                    ${peerId === roomCode ? '<span class="player-badge" style="background: var(--success)">Host</span>' : ''}
+                `;
+                list.appendChild(card);
+            });
+            
+            document.getElementById('playerCount').textContent = Object.keys(players).length;
+        }
+
+        function startQuiz() {
+            if (Object.keys(players).length < 1) {
+                alert('Wait for more players to join!');
+                return;
+            }
+
+            const message = { type: 'start' };
+            connections.forEach(conn => conn.send(message));
+            startQuizForAll();
+        }
+
+        function startQuizForAll() {
+            document.getElementById('waitingRoom').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            loadQuestion(0);
+        }
+
+        function loadQuestion(index) {
+            currentQuestion = index;
+            answered = false;
+            timeLeft = 15;
+            
+            const question = quizQuestions[currentQuestion];
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            
+            question.answers.forEach((answer, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(i);
+                answersGrid.appendChild(btn);
+            });
+
+            updateLeaderboard();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            document.getElementById('timer').textContent = timeLeft;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!answered) {
+                        selectAnswer(-1); // No answer
+                    }
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (answered) return;
+            answered = true;
+            clearInterval(timer);
+            
+            const question = quizQuestions[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedIndex === question.correct) {
+                buttons[selectedIndex].classList.add('correct');
+                myScore++;
+                players[myPeerId].score = myScore;
+            } else if (selectedIndex !== -1) {
+                buttons[selectedIndex].classList.add('incorrect');
+                buttons[question.correct].classList.add('correct');
+            } else {
+                buttons[question.correct].classList.add('correct');
+            }
+
+            // Send answer to host
+            if (!isHost) {
+                connections[0].send({
+                    type: 'answer',
+                    peerId: myPeerId,
+                    score: myScore
+                });
+            } else {
+                broadcastScores();
+            }
+
+            // Move to next question after delay
+            setTimeout(() => {
+                if (isHost) {
+                    if (currentQuestion < quizQuestions.length - 1) {
+                        const message = {
+                            type: 'question',
+                            questionIndex: currentQuestion + 1
+                        };
+                        connections.forEach(conn => conn.send(message));
+                        loadQuestion(currentQuestion + 1);
+                    } else {
+                        endQuiz();
+                    }
+                }
+            }, 3000);
+        }
+
+        function updateLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+            
+            const sortedPlayers = Object.entries(players)
+                .sort((a, b) => b[1].score - a[1].score);
+            
+            sortedPlayers.forEach(([peerId, player], index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                if (index === 0) item.classList.add('first');
+                if (peerId === myPeerId) item.classList.add('me');
+                
+                item.innerHTML = `
+                    <span class="leaderboard-rank">${index + 1}</span>
+                    <span class="leaderboard-name">${player.name}</span>
+                    <span class="leaderboard-score">${player.score}</span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function endQuiz() {
+            const sortedPlayers = Object.entries(players)
+                .sort((a, b) => b[1].score - a[1].score);
+            
+            const winner = sortedPlayers[0][1].name;
+            
+            const message = {
+                type: 'results',
+                winner: winner
+            };
+            connections.forEach(conn => conn.send(message));
+            
+            showResults(winner);
+        }
+
+        function showResults(winner) {
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            
+            document.getElementById('winnerText').textContent = `🎉 Winner: ${winner}!`;
+            
+            const finalList = document.getElementById('finalLeaderboard');
+            finalList.innerHTML = '';
+            
+            const sortedPlayers = Object.entries(players)
+                .sort((a, b) => b[1].score - a[1].score);
+            
+            sortedPlayers.forEach(([peerId, player], index) => {
+                const item = document.createElement('div');
+                item.className = 'final-leaderboard-item';
+                if (index === 0) item.classList.add('winner');
+                
+                item.innerHTML = `
+                    <span style="font-weight: 700;">#${index + 1} ${player.name}</span>
+                    <span style="color: var(--success); font-weight: 700;">${player.score}/${quizQuestions.length}</span>
+                `;
+                finalList.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
