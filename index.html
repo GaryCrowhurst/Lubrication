@@ -1,18 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engine Lubrication Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+    <title>Engine Lubrication Learning Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #FF6B35;
             --secondary: #1A2332;
             --accent: #F39C12;
             --success: #2ECC71;
-            --danger: #E74C3C;
             --light: #ECF0F1;
             --dark: #2C3E50;
         }
@@ -24,254 +22,299 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #1A2332 0%, #2C3E50 100%);
             color: var(--light);
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        header {
+        /* Hero Section */
+        .hero {
             text-align: center;
-            margin-bottom: 40px;
-            animation: slideDown 0.6s ease-out;
+            padding: 60px 20px;
+            background: linear-gradient(180deg, rgba(255, 107, 53, 0.1) 0%, transparent 100%);
         }
 
-        h1 {
+        .hero h1 {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-size: clamp(2.5rem, 8vw, 5rem);
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(255, 107, 53, 0.5);
+            animation: slideDown 0.8s ease-out;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
+        .hero .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
             color: var(--accent);
-            font-weight: 600;
+            font-weight: 500;
+            margin-bottom: 15px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
 
-        .quiz-container {
+        .hero .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            opacity: 0.9;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .path-step {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 107, 53, 0.3);
             border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            animation: fadeIn 0.8s ease-out 0.2s both;
-        }
-
-        .progress-container {
-            margin-bottom: 30px;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .question-counter {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .score-display {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            transition: width 0.5s ease;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(243, 156, 18, 0.6);
-        }
-
-        .question-card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
             padding: 30px;
-            margin-bottom: 30px;
-            border-left: 6px solid var(--primary);
-        }
-
-        .question-text {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .answers-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .answer-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 20px 25px;
-            font-size: 1.1rem;
-            color: var(--light);
-            cursor: pointer;
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
-            text-align: left;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
+            animation: slideIn 0.6s ease-out;
         }
 
-        .answer-btn:hover:not(:disabled) {
-            background: rgba(255, 107, 53, 0.2);
+        .path-step:hover {
+            transform: translateY(-5px);
             border-color: var(--primary);
-            transform: translateX(5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3);
         }
 
-        .answer-btn.correct {
-            background: var(--success);
-            border-color: var(--success);
-            animation: correctPulse 0.6s ease;
+        .step-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
         }
 
-        .answer-btn.incorrect {
-            background: var(--danger);
-            border-color: var(--danger);
-            animation: shake 0.5s ease;
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
         }
 
-        .answer-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
+        .step-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-weight: 700;
         }
 
-        .feedback {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+        .step-description {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
         }
 
-        .feedback.show {
-            opacity: 1;
-            transform: translateY(0);
+        .step-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .feedback.correct {
-            background: rgba(46, 204, 113, 0.2);
-            border: 2px solid var(--success);
-            color: var(--success);
-        }
-
-        .feedback.incorrect {
-            background: rgba(231, 76, 60, 0.2);
-            border: 2px solid var(--danger);
-            color: var(--danger);
-        }
-
-        .next-btn {
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
             background: var(--primary);
             color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            font-weight: 700;
+            text-decoration: none;
             border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            border: 2px solid transparent;
             text-transform: uppercase;
+            font-size: 0.9rem;
             letter-spacing: 1px;
-            display: none;
         }
 
-        .next-btn.show {
-            display: inline-block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .next-btn:hover {
+        .btn:hover {
             background: var(--accent);
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
         }
 
-        .results-container {
-            display: none;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--light);
         }
 
-        .results-container.show {
-            display: block;
+        .btn-secondary:hover {
+            background: var(--light);
+            color: var(--dark);
         }
 
-        .final-score {
-            font-size: 5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 30px 0;
-            text-shadow: 0 0 40px rgba(243, 156, 18, 0.6);
-            animation: scoreReveal 0.8s ease;
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
         }
 
-        .results-message {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            font-weight: 600;
+        .resource-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(46, 196, 182, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .results-feedback {
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--success);
+            box-shadow: 0 15px 40px rgba(46, 196, 182, 0.3);
+        }
+
+        .resource-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .resource-title {
             font-size: 1.3rem;
-            margin-bottom: 30px;
-            color: var(--light);
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .resource-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
             opacity: 0.9;
         }
 
-        .restart-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            font-size: 1.2rem;
+        /* Teacher Section */
+        .teacher-section {
+            background: rgba(243, 156, 18, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .teacher-section h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .teacher-section p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .teacher-section ul {
+            text-align: left;
+            max-width: 600px;
+            margin: 20px auto;
+            list-style: none;
+        }
+
+        .teacher-section li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .teacher-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
             font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.2rem;
         }
 
-        .restart-btn:hover {
-            background: #27AE60;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 60px;
         }
 
+        footer p {
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        /* Animations */
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -294,309 +337,218 @@
             }
         }
 
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @keyframes scoreReveal {
-            0% {
+        @keyframes slideIn {
+            from {
                 opacity: 0;
-                transform: scale(0.5);
+                transform: translateX(-30px);
             }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
+            to {
                 opacity: 1;
-                transform: scale(1);
+                transform: translateX(0);
             }
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
-            .quiz-container {
-                padding: 25px;
+            .step-actions {
+                flex-direction: column;
             }
 
-            .question-text {
-                font-size: 1.3rem;
+            .btn {
+                text-align: center;
             }
 
-            .answer-btn {
-                padding: 15px 20px;
-                font-size: 1rem;
-            }
-
-            .final-score {
-                font-size: 3.5rem;
+            .step-number {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Engine Lubrication</h1>
+        <p class="subtitle">Complete Learning Program</p>
+        <p class="description">
+            Master the 8 critical friction areas in an engine through interactive activities, 
+            presentations, quizzes, and hands-on learning with your Halfords model engine.
+        </p>
+        <div class="hero-badges">
+            <span class="badge">🎓 Level 1 & 2</span>
+            <span class="badge">🔧 Hands-On Learning</span>
+            <span class="badge">🎮 Interactive Activities</span>
+            <span class="badge">🏆 Multiplayer Quizzes</span>
+        </div>
+    </section>
+
+    <!-- Main Content -->
     <div class="container">
-        <header>
-            <h1>🔧 Engine Lubrication Quiz</h1>
-            <p class="subtitle">Test Your Knowledge on Friction Areas</p>
-        </header>
+        <!-- Learning Path -->
+        <section class="section-header">
+            <h2>Your Learning Journey</h2>
+            <p>Follow these steps for the best learning experience</p>
+        </section>
 
-        <div class="quiz-container">
-            <div class="progress-container">
-                <div class="progress-info">
-                    <span class="question-counter">Question <span id="currentQ">1</span> of <span id="totalQ">10</span></span>
-                    <span class="score-display">Score: <span id="score">0</span>/<span id="totalScore">10</span></span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-            </div>
-
-            <div id="quizContent">
-                <div class="question-card">
-                    <div class="question-text" id="questionText"></div>
-                    <div class="answers-grid" id="answersGrid"></div>
-                    <div class="feedback" id="feedback"></div>
-                    <button class="next-btn" id="nextBtn">Next Question</button>
+        <div class="learning-path">
+            <!-- Step 1: Presentation -->
+            <div class="path-step">
+                <div class="step-number">1</div>
+                <div class="step-icon">📊</div>
+                <h3 class="step-title">Watch the Presentation</h3>
+                <p class="step-description">
+                    Start by watching the PowerPoint presentation. Learn what friction is, why engines need oil, 
+                    and get an overview of all 8 critical friction areas. Your teacher will guide you through this.
+                </p>
+                <div class="step-actions">
+                    <a href="resources/engine-lubrication-presentation.pptx" class="btn" download>Download Slides</a>
                 </div>
             </div>
 
-            <div class="results-container" id="resultsContainer">
-                <div class="results-message" id="resultsMessage"></div>
-                <div class="final-score"><span id="finalScore"></span>%</div>
-                <div class="results-feedback" id="resultsFeedback"></div>
-                <button class="restart-btn" onclick="restartQuiz()">Try Again</button>
+            <!-- Step 2: Hands-On -->
+            <div class="path-step">
+                <div class="step-number">2</div>
+                <div class="step-icon">🔧</div>
+                <h3 class="step-title">Explore Your Model Engine</h3>
+                <p class="step-description">
+                    Use the interactive activity alongside your Halfords model engine. Click to identify each 
+                    friction area and learn why it needs lubrication. Take your time to find all 8 areas!
+                </p>
+                <div class="step-actions">
+                    <a href="activities/identify-friction-areas.html" class="btn">Start Activity</a>
+                    <a href="resources/engine-lubrication-handout.docx" class="btn-secondary btn" download>Download Handout</a>
+                </div>
+            </div>
+
+            <!-- Step 3: Test Yourself -->
+            <div class="path-step">
+                <div class="step-number">3</div>
+                <div class="step-icon">📝</div>
+                <h3 class="step-title">Test Your Knowledge</h3>
+                <p class="step-description">
+                    Ready to check what you've learned? Take the interactive quiz! Get instant feedback 
+                    on each answer and see your final score. Can you get 100%?
+                </p>
+                <div class="step-actions">
+                    <a href="quizzes/single-player-quiz.html" class="btn">Take Quiz</a>
+                </div>
+            </div>
+
+            <!-- Step 4: Compete -->
+            <div class="path-step">
+                <div class="step-number">4</div>
+                <div class="step-icon">🏆</div>
+                <h3 class="step-title">Challenge Your Classmates</h3>
+                <p class="step-description">
+                    Join a multiplayer quiz room and compete in real-time! See who can answer fastest and 
+                    score highest. Perfect for classroom competition and revision sessions.
+                </p>
+                <div class="step-actions">
+                    <a href="quizzes/multiplayer-quiz.html" class="btn">Join Competition</a>
+                </div>
             </div>
         </div>
+
+        <!-- Additional Resources -->
+        <section class="section-header">
+            <h2>All Resources</h2>
+            <p>Quick access to everything you need</p>
+        </section>
+
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-icon">📄</div>
+                <h3 class="resource-title">Student Handout</h3>
+                <p class="resource-description">
+                    Printable handout with all 8 friction areas, locations, and explanations. 
+                    Includes assessment questions.
+                </p>
+                <a href="resources/engine-lubrication-handout.docx" class="btn btn-secondary" download>Download</a>
+            </div>
+
+            <div class="resource-card">
+                <div class="resource-icon">📊</div>
+                <h3 class="resource-title">PowerPoint Slides</h3>
+                <p class="resource-description">
+                    14 professional slides covering friction, oil importance, and all critical areas. 
+                    Ready for classroom use.
+                </p>
+                <a href="resources/engine-lubrication-presentation.pptx" class="btn btn-secondary" download>Download</a>
+            </div>
+
+            <div class="resource-card">
+                <div class="resource-icon">📖</div>
+                <h3 class="resource-title">Teacher Guide</h3>
+                <p class="resource-description">
+                    Lesson plan, learning objectives, and tips for delivering the program effectively.
+                </p>
+                <a href="resources/teacher-guide.pdf" class="btn btn-secondary" download>Download</a>
+            </div>
+        </div>
+
+        <!-- Teacher Section -->
+        <section class="teacher-section">
+            <h2>👨‍🏫 For Teachers</h2>
+            <p>
+                This complete learning program is designed for Level 1 and Level 2 Motor Vehicle students. 
+                It combines multiple learning styles for maximum engagement and retention.
+            </p>
+            <ul>
+                <li>Covers City & Guilds curriculum requirements for engine lubrication</li>
+                <li>Scaffolded learning from presentation to hands-on to assessment</li>
+                <li>Works perfectly with Halfords model engines</li>
+                <li>All resources are printable and shareable</li>
+                <li>Interactive activities work on tablets and computers</li>
+                <li>Multiplayer quiz great for revision sessions</li>
+                <li>No server setup needed - host directly from GitHub Pages</li>
+            </ul>
+            <p style="margin-top: 30px;">
+                <strong>Suggested Lesson Duration:</strong> 90-120 minutes (or split across two sessions)
+            </p>
+        </section>
+
+        <!-- Learning Objectives -->
+        <section>
+            <div class="section-header">
+                <h2>Learning Outcomes</h2>
+                <p>By the end of this program, students will be able to:</p>
+            </div>
+            
+            <div class="path-step">
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 12px 0; padding-left: 40px; position: relative;">
+                        <span style="position: absolute; left: 0; color: var(--success); font-weight: 700; font-size: 1.3rem;">✓</span>
+                        Explain what friction is and why it's a problem in engines
+                    </li>
+                    <li style="padding: 12px 0; padding-left: 40px; position: relative;">
+                        <span style="position: absolute; left: 0; color: var(--success); font-weight: 700; font-size: 1.3rem;">✓</span>
+                        Identify all 8 critical friction areas on a model engine
+                    </li>
+                    <li style="padding: 12px 0; padding-left: 40px; position: relative;">
+                        <span style="position: absolute; left: 0; color: var(--success); font-weight: 700; font-size: 1.3rem;">✓</span>
+                        Describe the location and function of each friction area
+                    </li>
+                    <li style="padding: 12px 0; padding-left: 40px; position: relative;">
+                        <span style="position: absolute; left: 0; color: var(--success); font-weight: 700; font-size: 1.3rem;">✓</span>
+                        Explain why each area requires lubrication
+                    </li>
+                    <li style="padding: 12px 0; padding-left: 40px; position: relative;">
+                        <span style="position: absolute; left: 0; color: var(--success); font-weight: 700; font-size: 1.3rem;">✓</span>
+                        Understand the consequences of inadequate lubrication
+                    </li>
+                </ul>
+            </div>
+        </section>
     </div>
 
-    <script>
-        const quizData = [
-            {
-                question: "What happens when two metal parts rub together without oil?",
-                answers: [
-                    "They get cold",
-                    "They create heat and wear",
-                    "Nothing happens",
-                    "They become stronger"
-                ],
-                correct: 1
-            },
-            {
-                question: "Where would you find the camshaft bearings?",
-                answers: [
-                    "At the bottom of the engine",
-                    "Inside the fuel tank",
-                    "At the top of the engine where the camshaft rotates",
-                    "In the exhaust system"
-                ],
-                correct: 2
-            },
-            {
-                question: "What is the main job of engine oil?",
-                answers: [
-                    "To make the engine heavier",
-                    "To create a film between moving parts",
-                    "To make the engine louder",
-                    "To cool the radiator"
-                ],
-                correct: 1
-            },
-            {
-                question: "How many critical friction areas are there in an engine?",
-                answers: [
-                    "4",
-                    "6",
-                    "8",
-                    "10"
-                ],
-                correct: 2
-            },
-            {
-                question: "What do piston rings do?",
-                answers: [
-                    "They seal the cylinder and scrape oil from walls",
-                    "They hold the engine together",
-                    "They pump fuel",
-                    "They cool the radiator"
-                ],
-                correct: 0
-            },
-            {
-                question: "Where are the main bearings located?",
-                answers: [
-                    "In the cylinder head",
-                    "Supporting the crankshaft in the engine block",
-                    "In the oil filter",
-                    "On the pistons"
-                ],
-                correct: 1
-            },
-            {
-                question: "What could happen if an engine runs without oil?",
-                answers: [
-                    "It runs faster",
-                    "Nothing changes",
-                    "It could seize (stop working) in minutes",
-                    "It becomes quieter"
-                ],
-                correct: 2
-            },
-            {
-                question: "What drives the oil pump?",
-                answers: [
-                    "The battery",
-                    "The crankshaft",
-                    "The steering wheel",
-                    "The radiator"
-                ],
-                correct: 1
-            },
-            {
-                question: "Where do cylinder walls get their oil from?",
-                answers: [
-                    "The fuel tank",
-                    "Oil splash and piston rings",
-                    "The exhaust pipe",
-                    "The air filter"
-                ],
-                correct: 1
-            },
-            {
-                question: "Why is oil called 'the lifeblood of the engine'?",
-                answers: [
-                    "Because it's red like blood",
-                    "Because the engine can't work without it",
-                    "Because it tastes good",
-                    "Because it makes noise"
-                ],
-                correct: 1
-            }
-        ];
-
-        let currentQuestion = 0;
-        let score = 0;
-        let answered = false;
-
-        function loadQuestion() {
-            answered = false;
-            const question = quizData[currentQuestion];
-            
-            document.getElementById('questionText').textContent = question.question;
-            document.getElementById('currentQ').textContent = currentQuestion + 1;
-            document.getElementById('totalQ').textContent = quizData.length;
-            document.getElementById('totalScore').textContent = quizData.length;
-            
-            const answersGrid = document.getElementById('answersGrid');
-            answersGrid.innerHTML = '';
-            
-            question.answers.forEach((answer, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'answer-btn';
-                btn.textContent = answer;
-                btn.onclick = () => selectAnswer(index);
-                answersGrid.appendChild(btn);
-            });
-            
-            document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
-            document.getElementById('nextBtn').classList.remove('show');
-            
-            updateProgress();
-        }
-
-        function selectAnswer(selectedIndex) {
-            if (answered) return;
-            answered = true;
-            
-            const question = quizData[currentQuestion];
-            const buttons = document.querySelectorAll('.answer-btn');
-            const feedback = document.getElementById('feedback');
-            
-            buttons.forEach(btn => btn.disabled = true);
-            
-            if (selectedIndex === question.correct) {
-                buttons[selectedIndex].classList.add('correct');
-                feedback.textContent = '✓ Correct! Well done!';
-                feedback.classList.add('show', 'correct');
-                score++;
-                document.getElementById('score').textContent = score;
-            } else {
-                buttons[selectedIndex].classList.add('incorrect');
-                buttons[question.correct].classList.add('correct');
-                feedback.textContent = '✗ Not quite. The correct answer is highlighted in green.';
-                feedback.classList.add('show', 'incorrect');
-            }
-            
-            document.getElementById('nextBtn').classList.add('show');
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-            } else {
-                showResults();
-            }
-        }
-
-        function updateProgress() {
-            const progress = ((currentQuestion) / quizData.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        function showResults() {
-            document.getElementById('quizContent').style.display = 'none';
-            document.getElementById('resultsContainer').classList.add('show');
-            
-            const percentage = Math.round((score / quizData.length) * 100);
-            document.getElementById('finalScore').textContent = percentage;
-            
-            let message, feedback;
-            
-            if (percentage === 100) {
-                message = '🏆 Perfect Score!';
-                feedback = 'Outstanding! You know your engine lubrication inside and out!';
-            } else if (percentage >= 80) {
-                message = '⭐ Excellent Work!';
-                feedback = 'Great job! You really understand engine friction areas!';
-            } else if (percentage >= 60) {
-                message = '👍 Good Effort!';
-                feedback = 'Well done! Review the materials to improve even more.';
-            } else if (percentage >= 40) {
-                message = '📚 Keep Learning!';
-                feedback = 'You\'re getting there! Try reviewing the handout and interactive activity.';
-            } else {
-                message = '💪 Try Again!';
-                feedback = 'Don\'t worry! Go back to the materials and give it another go.';
-            }
-            
-            document.getElementById('resultsMessage').textContent = message;
-            document.getElementById('resultsFeedback').textContent = feedback;
-            document.getElementById('progressFill').style.width = '100%';
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            answered = false;
-            
-            document.getElementById('score').textContent = '0';
-            document.getElementById('quizContent').style.display = 'block';
-            document.getElementById('resultsContainer').classList.remove('show');
-            
-            loadQuestion();
-        }
-
-        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-
-        // Load first question
-        loadQuestion();
-    </script>
+    <!-- Footer -->
+    <footer>
+        <p>Engine Lubrication Learning Program</p>
+        <p>Created by <a href="https://codeedai.com">CodeEdAI</a> | Open Source Educational Resources</p>
+        <p style="margin-top: 15px; font-size: 0.9rem;">
+            <a href="https://github.com/yourusername/engine-lubrication-program">View on GitHub</a>
+        </p>
+    </footer>
 </body>
 </html>
